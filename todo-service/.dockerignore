@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+.bun
+bun.lockb
+
+# Prisma artifacts
+prisma/todo.db
+prisma/migrations
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Git
+.git
+.gitignore

@@ -1,0 +1,34 @@
+services:
+  db:
+    container_name: todo-db
+    build: ./todo-db
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=todo_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d todo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - todo-network
+
+  api:
+    container_name: todo-api
+    build: ./todo-service
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/todo_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
