@@ -12,7 +12,7 @@ export const BulkArray = (itemSchema: any, max = 10) =>
 	t.Array(itemSchema, {
 		minItems: 1,
 		maxItems: max,
-		error: `Batch operation must contain between 1 and ${max} items`
+		error: `Batch operation must contain between 1 and ${max} todos`
 	})
 
 export const todoResponseModel = new Elysia().model({
