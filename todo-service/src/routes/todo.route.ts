@@ -1,4 +1,4 @@
-import { Elysia, NotFoundError, t, InternalServerError } from 'elysia'
+import { Elysia, NotFoundError, t } from 'elysia'
 import { prisma } from '@/src/lib/prisma'
 import { Int32, todoResponseModel } from '@/src/models/todo.model'
 
@@ -46,6 +46,11 @@ export const todoRoutes = new Elysia({ prefix: '/todo' })
 			body: t.Object({
 				title: t.String({ minLength: 1, maxLength: 255 })
 			}),
+			transform({ body }) {
+				if (typeof body.title === 'string') {
+					body.title = body.title.trim()
+				}
+			},
 			response: { 201: t.Ref('todos.response') },
 			detail: { tags: ['Todo'], summary: 'Create a new todo' }
 		}
@@ -62,10 +67,7 @@ export const todoRoutes = new Elysia({ prefix: '/todo' })
 				const updatedTodo = await tx.todo.update({
 					where: { id },
 					data: {
-						...(body.title && { title: body.title.trim() }),
-						...(body.completed !== undefined && {
-							completed: body.completed
-						}),
+						...body,
 						updatedAt: new Date()
 					}
 				})
@@ -85,6 +87,11 @@ export const todoRoutes = new Elysia({ prefix: '/todo' })
 					completed: t.Boolean()
 				})
 			),
+			transform({ body }) {
+				if (body.title !== undefined) {
+					body.title = body.title.trim()
+				}
+			},
 			response: {
 				200: t.Ref('todos.response'),
 				404: t.Ref('error.response')

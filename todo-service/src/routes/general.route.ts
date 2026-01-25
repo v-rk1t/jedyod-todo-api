@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia'
 
-const defaultText = `📝 Todo API running at http://localhost:3000
-📑 Swagger available at http://localhost:3000/docs`
+const defaultText = `📝 Todo API running at ${process.env.BASE_URL}
+📑 Swagger available at ${process.env.BASE_URL}/docs`
 
 export const generalRoutes = new Elysia().get(
 	'/',
@@ -10,13 +10,10 @@ export const generalRoutes = new Elysia().get(
 		return defaultText
 	},
 	{
-		response: {
-			418: t.String()
-		},
+		response: { 418: t.String() },
 		detail: {
 			tags: ['General'],
-			summary: "I'm a teapot",
-			description: 'A standard HTCPCP/1.1 response for the root path.'
+			summary: "I'm a teapot"
 		}
 	}
 )

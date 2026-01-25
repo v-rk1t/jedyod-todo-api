@@ -15,7 +15,7 @@ export const todosRoutes = new Elysia({ prefix: '/todos' })
 			return await prisma.$transaction(async (tx) => {
 				const { count } = await tx.todo.createMany({
 					data: body.map((item) => ({
-						title: item.title.trim(),
+						title: item.title,
 						completed: item.completed ?? false
 					}))
 				})
@@ -40,6 +40,13 @@ export const todosRoutes = new Elysia({ prefix: '/todos' })
 				}),
 				10
 			),
+			transform({ body }) {
+				if (Array.isArray(body)) {
+					body.forEach((item) => {
+						if (item.title) item.title = item.title.trim()
+					})
+				}
+			},
 			response: { 201: t.Ref('todos.response') },
 			detail: { tags: ['Todos'], summary: 'Create multiple todos' }
 		}
@@ -88,6 +95,11 @@ export const todosRoutes = new Elysia({ prefix: '/todos' })
 				title: t.Optional(t.String({ minLength: 1, maxLength: 255 })),
 				completed: t.Optional(t.Boolean())
 			}),
+			transform({ body }) {
+				if (body.title !== undefined) {
+					body.title = body.title.trim()
+				}
+			},
 			response: {
 				200: t.Ref('todos.response'),
 				404: t.Ref('error.response')
