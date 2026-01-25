@@ -11,7 +11,7 @@ import { appErrorModel } from '@/src/models/todo.model'
 const app = new Elysia()
 	.use(appErrorModel)
 	.use(swaggerConfig)
-	.use(jwt({ name: 'jwt', secret: 'automation-practice-secret' }))
+	.use(jwt({ name: 'jwt', secret: process.env.JWT_SECRET || 'local-test' }))
 	.use(authRoutes)
 	.use(generalRoutes)
 	.use(toolsRoutes)
@@ -20,9 +20,13 @@ const app = new Elysia()
 		const path = url.pathname
 
 		const isPublic =
-			['/auth', '/tools/seed', '/tools/reset', '/docs'].some((p) =>
-				path.startsWith(p)
-			) || path === '/'
+			[
+				'/auth',
+				'/tools/seed',
+				'/tools/reset',
+				'/tools/health',
+				'/docs'
+			].some((p) => path.startsWith(p)) || path === '/'
 
 		if (isPublic) return
 
